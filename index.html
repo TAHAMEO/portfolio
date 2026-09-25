@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- A security portfolio should practise what it preaches: no inline scripts, no third-party requests.
+       If you add external scripts, fonts or images later, allow their origins here. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
+  <title>Taha Amin — Penetration Tester | Cyber Security Portfolio</title>
+  <meta name="description" content="Taha Amin — Penetration Tester specialising in web application and network security. BS Cyber Security. Methodology-driven with OWASP, PTES and MITRE ATT&amp;CK.">
+  <meta name="author" content="Taha Amin">
+  <meta name="theme-color" content="#05080a">
+  <meta name="color-scheme" content="dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Taha Amin — Penetration Tester">
+  <meta property="og:description" content="Web application &amp; network security. OWASP • PTES • MITRE ATT&amp;CK.">
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/136238381?v=4">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="@tahameo5">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/jetbrains-mono-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/init.js"></script>
+  <script src="js/main.js" defer></script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Taha Amin",
+      "jobTitle": "Penetration Tester",
+      "description": "Penetration Tester specialising in web application and network security.",
+      "image": "https://avatars.githubusercontent.com/u/136238381?v=4",
+      "sameAs": ["https://github.com/TAHAMEO", "https://x.com/tahameo5"],
+      "knowsAbout": ["Penetration Testing", "Web Application Security", "Network Security", "OSINT", "OWASP", "PTES", "MITRE ATT&CK"]
+    }
+  </script>
+</head>
+<body>
+  <!-- Icon sprite — referenced with <use href="#i-name">. Paths from Lucide (ISC licence); X logo from Simple Icons (CC0). -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+    <symbol id="i-cap" viewBox="0 0 24 24"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-network" viewBox="0 0 24 24"><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="1"/><path d="M18.944 12.33a1 1 0 0 0 0-.66 7.5 7.5 0 0 0-13.888 0 1 1 0 0 0 0 .66 7.5 7.5 0 0 0 13.888 0"/></symbol>
+    <symbol id="i-crosshair" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M22 12h-4"/><path d="M6 12H2"/><path d="M12 6V2"/><path d="M12 22v-4"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><path d="M12 19h8"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+    <symbol id="i-radar" viewBox="0 0 24 24"><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"/><path d="M4 6h.01"/><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35"/><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67"/><path d="M12 18h.01"/><path d="M17.99 11.66A6 6 0 0 1 15.77 16.67"/><circle cx="12" cy="12" r="2"/><path d="m13.41 10.59 5.66-5.66"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+    <symbol id="i-enter" viewBox="0 0 24 24"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><path d="M12 15V3"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Boot sequence: only rendered when js/init.js adds the "booting" class -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot__inner">
+      <p class="boot__title">TAHA-SEC // secure shell v2.6</p>
+      <div class="boot__log" id="boot-log"></div>
+      <div class="boot__bar"><span id="boot-bar"></span></div>
+      <p class="boot__hint">press any key to skip</p>
+    </div>
+  </div>
+
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <header class="header" id="header">
+    <nav class="nav container" aria-label="Primary">
+      <a class="logo" href="#home" aria-label="Taha Amin, back to top">
+        <span class="logo__prompt">~/</span>taha<span class="logo__cursor">_</span>
+      </a>
+
+      <button class="nav__toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+        <span class="sr-only">Open menu</span>
+        <span class="nav__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+
+      <ul class="nav__menu" id="nav-menu">
+        <li><a class="nav__link" href="#about"><span>01.</span>about</a></li>
+        <li><a class="nav__link" href="#expertise"><span>02.</span>expertise</a></li>
+        <li><a class="nav__link" href="#skills"><span>03.</span>skills</a></li>
+        <li><a class="nav__link" href="#methodology"><span>04.</span>methodology</a></li>
+        <li><a class="nav__link" href="#projects"><span>05.</span>projects</a></li>
+        <li><a class="nav__link" href="#contact"><span>06.</span>contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="home" aria-labelledby="hero-title">
+      <canvas class="hero__matrix" id="matrix" aria-hidden="true"></canvas>
+
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <p class="hero__prompt" aria-hidden="true"><span class="c-accent">root@kali</span>:<span class="c-cyan">~</span># ./whoami.sh</p>
+
+          <h1 class="hero__title" id="hero-title">
+            <span class="hero__hello">Hi, I'm</span>
+            <span class="glitch" data-text="Taha Amin">Taha Amin</span>
+          </h1>
+
+          <p class="hero__role">
+            <span class="sr-only">Penetration Tester, Web App Security, Network Security, OSINT and Recon, Ethical Hacker</span>
+            <span aria-hidden="true"><span class="c-dim">&gt;</span> <span class="typed" id="typed" data-words="Penetration Tester|Web App Security|Network Security|OSINT &amp; Recon|Ethical Hacker">Penetration Tester</span><span class="caret"></span></span>
+          </p>
+
+          <p class="hero__desc">
+            I break into web applications and networks — <em>with permission</em> — to find the vulnerabilities
+            real attackers would exploit, then help teams fix them before anyone else finds them.
+          </p>
+
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#projects">View my work <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <a class="btn btn--ghost" href="#contact">Get in touch</a>
+            <a class="btn btn--ghost" data-config="resume" href="#" download hidden><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg> Resume</a>
+          </div>
+
+          <ul class="socials">
+            <li><a href="https://github.com/TAHAMEO" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg class="icon" aria-hidden="true"><use href="#i-github"/></svg></a></li>
+            <li><a href="https://x.com/tahameo5" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-x"/></svg></a></li>
+            <li data-config="linkedin" hidden><a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg></a></li>
+            <li data-config="email" hidden><a href="#" aria-label="Email"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></a></li>
+          </ul>
+        </div>
+
+        <div class="hero__visual">
+          <div class="avatar">
+            <span class="avatar__orbit" aria-hidden="true"></span>
+            <span class="avatar__ring" aria-hidden="true"></span>
+            <div class="avatar__img">
+              <!-- Profile photo: taken from github.com/TAHAMEO. Replace the file to change it. -->
+              <img src="assets/img/profile.jpg" alt="Portrait of Taha Amin" width="460" height="460" fetchpriority="high">
+              <span class="avatar__scan" aria-hidden="true"></span>
+            </div>
+            <span class="chip chip--float chip--1" aria-hidden="true">OWASP</span>
+            <span class="chip chip--float chip--2" aria-hidden="true">PTES</span>
+            <span class="chip chip--float chip--3" aria-hidden="true">MITRE ATT&amp;CK</span>
+          </div>
+          <p class="id-tag" aria-hidden="true"><span class="pulse"></span>uid=1337(taha) gid=1337(pentest)</p>
+        </div>
+      </div>
+
+      <a class="scroll-cue" href="#about" aria-label="Scroll to About section"><span></span></a>
+    </section>
+
+    <!-- ===================== ABOUT ===================== -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">// 01. about</p>
+          <h2 class="section__title" id="about-title" data-scramble>About Me</h2>
+        </header>
+
+        <div class="about">
+          <div class="about__text reveal">
+            <p>
+              I'm <strong>Taha Amin</strong>, a penetration tester with an academic foundation in
+              <strong>Cyber Security (BS)</strong>. I specialise in <strong>web application</strong> and
+              <strong>network security</strong> — thinking like an adversary to uncover weaknesses, then turning
+              every finding into a clear, actionable fix.
+            </p>
+            <p>
+              My work is methodology-driven: I follow <strong>OWASP</strong> guidance for web testing, structure
+              engagements around <strong>PTES</strong>, and map attacker behaviour to <strong>MITRE ATT&amp;CK</strong>
+              — so results are reproducible, prioritised and easy to act on.
+            </p>
+            <p>
+              When I'm not testing, I build my own tooling in <strong>Python</strong> — from OSINT automation to
+              Tor-based scrapers for threat-intelligence research. The best way to defend a system is to understand
+              exactly how it breaks.
+            </p>
+
+            <ul class="facts">
+              <li class="fact">
+                <span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-cap"/></svg></span>
+                <span><span class="fact__label">Education</span><span class="fact__value">BS Cyber Security</span></span>
+              </li>
+              <li class="fact">
+                <span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg></span>
+                <span><span class="fact__label">Focus</span><span class="fact__value">Web App &amp; Network Security</span></span>
+              </li>
+              <li class="fact">
+                <span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg></span>
+                <span><span class="fact__label">Standards</span><span class="fact__value">OWASP · PTES · MITRE ATT&amp;CK</span></span>
+              </li>
+              <li class="fact">
+                <span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>
+                <span><span class="fact__label">Builds with</span><span class="fact__value">Python</span></span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Interactive terminal (commands live in js/main.js) -->
+          <div class="terminal reveal" id="terminal">
+            <div class="terminal__bar">
+              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="terminal__title">taha@kali: ~</span>
+            </div>
+            <div class="terminal__body" id="terminal-body">
+              <div class="terminal__output" id="terminal-output" role="log" aria-label="Terminal output">
+                <div class="terminal__line"><span class="t-prompt">taha@kali</span>:<span class="t-path">~</span>$ <span class="t-cmd">whoami</span></div>
+                <div class="terminal__line">taha_amin — penetration tester</div>
+                <div class="terminal__line"><span class="t-prompt">taha@kali</span>:<span class="t-path">~</span>$ <span class="t-cmd">cat focus.txt</span></div>
+                <div class="terminal__line"><span class="t-ok">[+]</span> web application security</div>
+                <div class="terminal__line"><span class="t-ok">[+]</span> network security</div>
+                <div class="terminal__line"><span class="t-ok">[+]</span> osint &amp; reconnaissance</div>
+                <div class="terminal__line"><span class="t-prompt">taha@kali</span>:<span class="t-path">~</span>$ <span class="t-cmd">echo $STANDARDS</span></div>
+                <div class="terminal__line">OWASP · PTES · MITRE ATT&amp;CK</div>
+                <div class="terminal__line js-only t-dim">Type <span class="t-cmd">help</span> to see what else this terminal can do.</div>
+              </div>
+              <form class="terminal__prompt" id="terminal-form" autocomplete="off">
+                <span class="terminal__ps1" aria-hidden="true"><span class="t-prompt">taha@kali</span>:<span class="t-path">~</span>$</span>
+                <input class="terminal__input" id="terminal-input" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" enterkeyhint="send" aria-label="Terminal command — type help for a list of commands">
+                <button class="terminal__run" type="submit" aria-label="Run command"><svg class="icon" aria-hidden="true"><use href="#i-enter"/></svg></button>
+              </form>
+            </div>
+            <div class="terminal__hints" id="terminal-hints" role="group" aria-label="Quick commands" hidden>
+              <span class="terminal__hints-label" aria-hidden="true">quick run:</span>
+              <button type="button" data-cmd="help">help</button>
+              <button type="button" data-cmd="skills">skills</button>
+              <button type="button" data-cmd="projects">projects</button>
+              <button type="button" data-cmd="neofetch">neofetch</button>
+              <button type="button" data-cmd="clear">clear</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== EXPERTISE ===================== -->
+    <section class="section" id="expertise" aria-labelledby="expertise-title">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">// 02. expertise</p>
+          <h2 class="section__title" id="expertise-title" data-scramble>What I Do</h2>
+          <p class="section__lead">Offensive security focused on one goal: finding what attackers would find — first.</p>
+        </header>
+
+        <div class="grid grid--3">
+          <article class="card card--hud reveal">
+            <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></span>
+            <h3 class="card__title">Web Application Pentesting</h3>
+            <p class="card__text">Hands-on testing of web apps and APIs against the OWASP Top 10 — injection, broken access control, authentication and session flaws, XSS, SSRF and business-logic abuse.</p>
+            <ul class="tags"><li>OWASP Top 10</li><li>Burp Suite</li><li>APIs</li></ul>
+          </article>
+
+          <article class="card card--hud reveal">
+            <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-network"/></svg></span>
+            <h3 class="card__title">Network Pentesting</h3>
+            <p class="card__text">Internal and external network assessments — host discovery, service enumeration, exploitation, privilege escalation and lateral movement.</p>
+            <ul class="tags"><li>Nmap</li><li>Metasploit</li><li>PrivEsc</li></ul>
+          </article>
+
+          <article class="card card--hud reveal">
+            <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-scan"/></svg></span>
+            <h3 class="card__title">OSINT &amp; Reconnaissance</h3>
+            <p class="card__text">Mapping an organisation's attack surface from public sources — domains, subdomains, exposed services, leaked data and the people behind them.</p>
+            <ul class="tags"><li>OSINT</li><li>Shodan</li><li>Recon</li></ul>
+          </article>
+
+          <article class="card card--hud reveal">
+            <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-crosshair"/></svg></span>
+            <h3 class="card__title">Adversary Emulation</h3>
+            <p class="card__text">Mapping attack paths to MITRE ATT&amp;CK tactics and techniques to show exactly how a real threat actor would move through your environment.</p>
+            <ul class="tags"><li>MITRE ATT&amp;CK</li><li>TTPs</li><li>Kill Chain</li></ul>
+          </article>
+
+          <article class="card card--hud reveal">
+            <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg></span>
+            <h3 class="card__title">Security Tooling</h3>
+            <p class="card__text">Building Python tools that automate recon, scraping and repetitive testing tasks — so more time goes into the findings that matter.</p>
+            <ul class="tags"><li>Python</li><li>Automation</li><li>Tor</li></ul>
+          </article>
+
+          <article class="card card--hud reveal">
+            <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg></span>
+            <h3 class="card__title">Reporting &amp; Remediation</h3>
+            <p class="card__text">Clear reports with an executive summary for leadership and reproducible, risk-rated findings with fix guidance for engineers.</p>
+            <ul class="tags"><li>CVSS</li><li>PoC</li><li>Remediation</li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SKILLS ===================== -->
+    <section class="section" id="skills" aria-labelledby="skills-title">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">// 03. skills</p>
+          <h2 class="section__title" id="skills-title" data-scramble>Technical Arsenal</h2>
+          <p class="section__lead">The techniques, tools and standards I use across an engagement.</p>
+        </header>
+
+        <div class="grid grid--3">
+          <div class="card skill-group reveal">
+            <h3 class="skill-group__title"><span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></span>Web Security</h3>
+            <ul class="chips">
+              <li>OWASP Top 10</li><li>Burp Suite</li><li>SQL Injection</li><li>XSS</li><li>SSRF</li>
+              <li>IDOR &amp; Access Control</li><li>Auth &amp; Session Testing</li><li>API Security</li>
+            </ul>
+          </div>
+
+          <div class="card skill-group reveal">
+            <h3 class="skill-group__title"><span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-network"/></svg></span>Network Security</h3>
+            <ul class="chips">
+              <li>Nmap</li><li>Metasploit</li><li>Wireshark</li><li>Netcat</li>
+              <li>Service Enumeration</li><li>Privilege Escalation</li><li>Lateral Movement</li>
+            </ul>
+          </div>
+
+          <div class="card skill-group reveal">
+            <h3 class="skill-group__title"><span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-scan"/></svg></span>Recon &amp; OSINT</h3>
+            <ul class="chips">
+              <li>OSINT Methodology</li><li>Shodan</li><li>Subdomain Enumeration</li>
+              <li>Google Dorking</li><li>Tor &amp; Dark-Web Research</li>
+            </ul>
+          </div>
+
+          <div class="card skill-group reveal">
+            <h3 class="skill-group__title"><span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-code"/></svg></span>Programming</h3>
+            <ul class="chips">
+              <li>Python</li><li>Bash</li><li>SQL</li><li>Web Scraping</li><li>Automation</li>
+            </ul>
+          </div>
+
+          <div class="card skill-group reveal">
+            <h3 class="skill-group__title"><span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-server"/></svg></span>Platforms</h3>
+            <ul class="chips">
+              <li>Kali Linux</li><li>Linux</li><li>Windows</li><li>Git &amp; GitHub</li><li>Virtual Labs</li>
+            </ul>
+          </div>
+
+          <div class="card skill-group reveal">
+            <h3 class="skill-group__title"><span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg></span>Frameworks</h3>
+            <ul class="chips">
+              <li>OWASP</li><li>PTES</li><li>MITRE ATT&amp;CK</li><li>CVSS</li><li>Responsible Disclosure</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Decorative scrolling tool strip (the list is duplicated for a seamless loop) -->
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee__track">
+          <ul class="marquee__list">
+            <li>Burp Suite</li><li>Nmap</li><li>Metasploit</li><li>Wireshark</li><li>Kali Linux</li>
+            <li>Python</li><li>SQLmap</li><li>Gobuster</li><li>Hydra</li><li>John the Ripper</li>
+            <li>Hashcat</li><li>Netcat</li><li>Shodan</li><li>Tor</li><li>Git</li>
+          </ul>
+          <ul class="marquee__list">
+            <li>Burp Suite</li><li>Nmap</li><li>Metasploit</li><li>Wireshark</li><li>Kali Linux</li>
+            <li>Python</li><li>SQLmap</li><li>Gobuster</li><li>Hydra</li><li>John the Ripper</li>
+            <li>Hashcat</li><li>Netcat</li><li>Shodan</li><li>Tor</li><li>Git</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== METHODOLOGY ===================== -->
+    <section class="section" id="methodology" aria-labelledby="methodology-title">
+      <div class="container">
+        <header class="section__head section__head--center reveal">
+          <p class="section__tag">// 04. methodology</p>
+          <h2 class="section__title" id="methodology-title" data-scramble>How I Hack</h2>
+          <p class="section__lead">Ethically, and by the book. Every engagement follows the Penetration Testing Execution Standard (PTES), with findings tested against OWASP and mapped to MITRE ATT&amp;CK.</p>
+        </header>
+
+        <ol class="timeline">
+          <li class="timeline__item reveal">
+            <span class="timeline__dot" aria-hidden="true"></span>
+            <div class="card timeline__card">
+              <span class="timeline__num">phase_01</span>
+              <h3 class="timeline__title">Pre-engagement</h3>
+              <p>Agree scope, rules of engagement and written authorisation. No permission, no testing.</p>
+            </div>
+          </li>
+          <li class="timeline__item reveal">
+            <span class="timeline__dot" aria-hidden="true"></span>
+            <div class="card timeline__card">
+              <span class="timeline__num">phase_02</span>
+              <h3 class="timeline__title">Intelligence Gathering</h3>
+              <p>Passive and active recon — OSINT, DNS, subdomains, exposed services and the technology stack.</p>
+            </div>
+          </li>
+          <li class="timeline__item reveal">
+            <span class="timeline__dot" aria-hidden="true"></span>
+            <div class="card timeline__card">
+              <span class="timeline__num">phase_03</span>
+              <h3 class="timeline__title">Threat Modelling</h3>
+              <p>Identify high-value assets and likely adversaries, then plan realistic attack paths.</p>
+            </div>
+          </li>
+          <li class="timeline__item reveal">
+            <span class="timeline__dot" aria-hidden="true"></span>
+            <div class="card timeline__card">
+              <span class="timeline__num">phase_04</span>
+              <h3 class="timeline__title">Vulnerability Analysis</h3>
+              <p>Automated scanning plus manual validation to confirm what is actually exploitable — no false positives.</p>
+            </div>
+          </li>
+          <li class="timeline__item reveal">
+            <span class="timeline__dot" aria-hidden="true"></span>
+            <div class="card timeline__card">
+              <span class="timeline__num">phase_05</span>
+              <h3 class="timeline__title">Exploitation</h3>
+              <p>Safely prove impact — gaining access without disrupting production systems.</p>
+            </div>
+          </li>
+          <li class="timeline__item reveal">
+            <span class="timeline__dot" aria-hidden="true"></span>
+            <div class="card timeline__card">
+              <span class="timeline__num">phase_06</span>
+              <h3 class="timeline__title">Post-Exploitation</h3>
+              <p>Escalate privileges, move laterally and measure the real business impact of a compromise.</p>
+            </div>
+          </li>
+          <li class="timeline__item reveal">
+            <span class="timeline__dot" aria-hidden="true"></span>
+            <div class="card timeline__card">
+              <span class="timeline__num">phase_07</span>
+              <h3 class="timeline__title">Reporting</h3>
+              <p>Executive summary, CVSS-rated findings, proof of concept and clear remediation steps.</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="grid grid--3 frameworks">
+          <article class="card framework reveal">
+            <span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+            <div>
+              <h3 class="framework__title">OWASP</h3>
+              <p>Web and API testing guided by the OWASP Top 10 and the Web Security Testing Guide.</p>
+            </div>
+          </article>
+          <article class="card framework reveal">
+            <span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg></span>
+            <div>
+              <h3 class="framework__title">PTES</h3>
+              <p>The Penetration Testing Execution Standard — a structured, seven-phase engagement lifecycle.</p>
+            </div>
+          </article>
+          <article class="card framework reveal">
+            <span class="icon-box"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg></span>
+            <div>
+              <h3 class="framework__title">MITRE ATT&amp;CK</h3>
+              <p>A knowledge base of real-world adversary tactics and techniques for mapping attack paths.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROJECTS ===================== -->
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <header class="section__head reveal">
+          <p class="section__tag">// 05. projects</p>
+          <h2 class="section__title" id="projects-title" data-scramble>Featured Projects</h2>
+          <p class="section__lead">Open-source security tooling I've built. Everything is on GitHub.</p>
+        </header>
+
+        <div class="grid grid--3">
+          <article class="card project reveal">
+            <div class="project__bar" aria-hidden="true">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span class="project__path">~/projects/OSINT_TOOL</span>
+            </div>
+            <div class="project__body">
+              <div class="project__top">
+                <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-scan"/></svg></span>
+                <svg class="icon project__arrow" aria-hidden="true"><use href="#i-external"/></svg>
+              </div>
+              <h3 class="project__title"><a href="https://github.com/TAHAMEO/OSINT_TOOL" target="_blank" rel="noopener noreferrer">OSINT Tool</a></h3>
+              <p class="project__text">A Python reconnaissance utility that automates open-source intelligence gathering — collecting publicly available information on a target to map its attack surface before an engagement.</p>
+              <ul class="tags"><li>Python</li><li>OSINT</li><li>Recon</li></ul>
+            </div>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project__bar" aria-hidden="true">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span class="project__path">~/projects/tor-scrape</span>
+            </div>
+            <div class="project__body">
+              <div class="project__top">
+                <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-radar"/></svg></span>
+                <svg class="icon project__arrow" aria-hidden="true"><use href="#i-external"/></svg>
+              </div>
+              <h3 class="project__title"><a href="https://github.com/TAHAMEO/tor-scrape" target="_blank" rel="noopener noreferrer">Tor Scrape</a></h3>
+              <p class="project__text">A Python scraper that routes its traffic through the Tor network to collect content from .onion services — useful for dark-web monitoring and threat-intelligence research.</p>
+              <ul class="tags"><li>Python</li><li>Tor</li><li>Threat Intel</li><li>Scraping</li></ul>
+            </div>
+          </article>
+
+          <article class="card project reveal">
+            <div class="project__bar" aria-hidden="true">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span class="project__path">~/projects/14_AI</span>
+            </div>
+            <div class="project__body">
+              <div class="project__top">
+                <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-bot"/></svg></span>
+                <svg class="icon project__arrow" aria-hidden="true"><use href="#i-external"/></svg>
+              </div>
+              <h3 class="project__title"><a href="https://github.com/TAHAMEO/14_AI" target="_blank" rel="noopener noreferrer">14_AI</a></h3>
+              <p class="project__text">An experimental AI agent written in Python (based on orbitalchild's agent), exploring how autonomous agents can take on multi-step automation tasks.</p>
+              <ul class="tags"><li>Python</li><li>AI Agent</li><li>Automation</li></ul>
+            </div>
+          </article>
+        </div>
+
+        <div class="section__more reveal">
+          <a class="btn btn--ghost" href="https://github.com/TAHAMEO?tab=repositories" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" aria-hidden="true"><use href="#i-github"/></svg> More on GitHub
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACT ===================== -->
+    <section class="section" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="contact card card--hud reveal">
+          <header class="section__head section__head--center">
+            <p class="section__tag">// 06. contact</p>
+            <h2 class="section__title" id="contact-title" data-scramble>Get In Touch</h2>
+            <p class="section__lead">Need a penetration test, want to collaborate on a security tool, or just want to talk security? Reach out — I'm always happy to connect.</p>
+          </header>
+
+          <ul class="contact__links">
+            <li>
+              <a class="contact-card" href="https://github.com/TAHAMEO" target="_blank" rel="noopener noreferrer">
+                <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-github"/></svg></span>
+                <span class="contact-card__label">GitHub</span>
+                <span class="contact-card__value">@TAHAMEO</span>
+              </a>
+            </li>
+            <li>
+              <a class="contact-card" href="https://x.com/tahameo5" target="_blank" rel="noopener noreferrer">
+                <span class="icon-box icon-box--lg"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-x"/></svg></span>
+                <span class="contact-card__label">X / Twitter</span>
+                <span class="contact-card__value">@tahameo5</span>
+              </a>
+            </li>
+            <li data-config="linkedin" hidden>
+              <a class="contact-card" href="#" target="_blank" rel="noopener noreferrer">
+                <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg></span>
+                <span class="contact-card__label">LinkedIn</span>
+                <span class="contact-card__value">Let's connect</span>
+              </a>
+            </li>
+            <li data-config="email" hidden>
+              <a class="contact-card" href="#">
+                <span class="icon-box icon-box--lg"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></span>
+                <span class="contact-card__label">Email</span>
+                <span class="contact-card__value" data-config-text>Email me</span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- Shown only when an email is set in js/main.js; opens the visitor's mail app -->
+          <form class="terminal contact__form" id="contact-form" data-config="email" hidden>
+            <div class="terminal__bar">
+              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="terminal__title">./send_secure_message.sh</span>
+            </div>
+            <div class="contact__fields">
+              <div class="field">
+                <label for="cf-name">name</label>
+                <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100">
+              </div>
+              <div class="field">
+                <label for="cf-email">email</label>
+                <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="200">
+              </div>
+              <div class="field field--full">
+                <label for="cf-message">message</label>
+                <textarea id="cf-message" name="message" rows="5" required maxlength="4000"></textarea>
+              </div>
+              <div class="field--full contact__submit">
+                <button class="btn btn--primary" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg> Send message</button>
+                <p class="contact__status" id="contact-status" role="status"></p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__brand"><span class="c-accent">~/</span>taha <span class="c-dim">— hack the planet, ethically.</span></p>
+      <ul class="socials socials--sm">
+        <li><a href="https://github.com/TAHAMEO" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><svg class="icon" aria-hidden="true"><use href="#i-github"/></svg></a></li>
+        <li><a href="https://x.com/tahameo5" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-x"/></svg></a></li>
+        <li data-config="linkedin" hidden><a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg></a></li>
+        <li data-config="email" hidden><a href="#" aria-label="Email"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></a></li>
+      </ul>
+      <p class="footer__copy">© <span id="year">2026</span> Taha Amin. All systems secure.</p>
+    </div>
+    <a class="to-top" id="to-top" href="#home" aria-label="Back to top"><svg class="icon" aria-hidden="true"><use href="#i-arrow-up"/></svg></a>
+  </footer>
+</body>
+</html>
