@@ -6,17 +6,15 @@
   'use strict';
 
   /* ------------------------------------------------------------------
-   * CONFIG — fill these in to show extra contact options.
-   * Leave a value empty ('') and that link/button stays hidden.
+   * PROFILE — contact details used by the terminal and the email form.
+   * The same links are written into index.html; update both together.
    * ------------------------------------------------------------------ */
-  const CONFIG = {
-    email: '', //    e.g. 'you@example.com' — adds Email links and the contact form
-    linkedin: '', // e.g. 'https://www.linkedin.com/in/your-handle'
-    resume: '', //   e.g. 'assets/Taha-Amin-Resume.pdf' — adds a "Resume" download button
-  };
-
-  const LINKS = {
+  const PROFILE = {
+    email: '1tahameo@gmail.com',
+    cv: 'assets/Taha_Amin_CV.pdf',
     github: 'https://github.com/TAHAMEO',
+    linkedin: 'https://www.linkedin.com/in/taha-meo-68a89a376/',
+    bugcrowd: 'https://bugcrowd.com/h/tahameo',
     x: 'https://x.com/tahameo5',
   };
 
@@ -27,19 +25,170 @@
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const stripProtocol = (url) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 
-  /* ---------- Optional links from CONFIG ---------- */
-  function applyConfig() {
-    $$('[data-config]').forEach((el) => {
-      const key = el.dataset.config;
-      const value = (CONFIG[key] || '').trim();
-      if (!value) return;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-      const link = el.matches('a') ? el : $('a', el);
-      if (link) link.href = key === 'email' ? `mailto:${value}` : value;
-      $$('[data-config-text]', el).forEach((node) => {
-        node.textContent = key === 'email' ? value : stripProtocol(value);
-      });
-      el.hidden = false;
+  /* ---------- Sound effects (synthesised with Web Audio — no audio files) ---------- */
+  const sfx = (() => {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const STORAGE_KEY = 'sfx';
+    // Minimum gap between repeats of the same sound, so fast pointer moves don't turn into noise.
+    const minGap = { hover: 70, key: 25, error: 250 };
+    const lastPlayed = {};
+    let enabled = Boolean(AudioCtx);
+    let unlocked = false; // browsers only allow audio after the visitor interacts with the page
+    let ctx = null;
+    let master = null;
+    let noiseBuffer = null;
+
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === 'off') enabled = false;
+    } catch {
+      /* storage unavailable — keep the default */
+    }
+
+    const context = () => {
+      if (!enabled || !unlocked || !AudioCtx) return null;
+      if (!ctx) {
+        ctx = new AudioCtx();
+        master = ctx.createGain();
+        master.gain.value = 0.25;
+        master.connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      return ctx.state === 'running' ? ctx : null;
+    };
+
+    // A short beep that can glide from one pitch to another.
+    const tone = (ac, { freq, to = freq, type = 'square', at = 0, dur = 0.08, vol = 0.3 }) => {
+      const start = ac.currentTime + at;
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, start);
+      if (to !== freq) osc.frequency.exponentialRampToValueAtTime(to, start + dur);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(vol, start + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      osc.connect(gain).connect(master);
+      osc.start(start);
+      osc.stop(start + dur + 0.02);
+    };
+
+    // A filtered burst of noise — sounds like a mechanical key click.
+    const click = (ac, { freq = 3200, dur = 0.03, vol = 0.5 }) => {
+      if (!noiseBuffer) {
+        const length = Math.ceil(ac.sampleRate * 0.05);
+        noiseBuffer = ac.createBuffer(1, length, ac.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < length; i += 1) data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 2;
+      }
+      const start = ac.currentTime;
+      const source = ac.createBufferSource();
+      const filter = ac.createBiquadFilter();
+      const gain = ac.createGain();
+      source.buffer = noiseBuffer;
+      filter.type = 'bandpass';
+      filter.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, start);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      source.connect(filter).connect(gain).connect(master);
+      source.start(start);
+      source.stop(start + dur + 0.01);
+    };
+
+    const sounds = {
+      hover: (ac) => tone(ac, { freq: 1500, to: 1900, type: 'sine', dur: 0.045, vol: 0.06 }),
+      click: (ac) => tone(ac, { freq: 620, to: 310, dur: 0.06, vol: 0.09 }),
+      key: (ac) => click(ac, { freq: 2600 + Math.random() * 1600, vol: 0.45 }),
+      enter: (ac) => {
+        tone(ac, { freq: 440, dur: 0.05, vol: 0.08 });
+        tone(ac, { freq: 880, at: 0.05, dur: 0.08, vol: 0.08 });
+      },
+      error: (ac) => tone(ac, { freq: 200, to: 90, type: 'sawtooth', dur: 0.26, vol: 0.1 }),
+      boot: (ac) => tone(ac, { freq: 900, dur: 0.035, vol: 0.05 }),
+      granted: (ac) => [523.25, 783.99, 1046.5].forEach((freq, i) => tone(ac, { freq, type: 'triangle', at: i * 0.09, dur: 0.2, vol: 0.14 })),
+      success: (ac) => [659.25, 880, 1318.5].forEach((freq, i) => tone(ac, { freq, type: 'triangle', at: i * 0.08, dur: 0.14, vol: 0.13 })),
+      toggle: (ac) => tone(ac, { freq: 600, to: 1200, type: 'sine', dur: 0.1, vol: 0.14 }),
+    };
+
+    const listeners = [];
+
+    return {
+      supported: Boolean(AudioCtx),
+      get enabled() {
+        return enabled;
+      },
+      unlock() {
+        // Keys like Escape don't count as a user gesture; creating audio then only logs a warning.
+        if (navigator.userActivation && !navigator.userActivation.isActive) return;
+        unlocked = true;
+        context();
+      },
+      play(name) {
+        const now = performance.now();
+        if (minGap[name] && now - (lastPlayed[name] || 0) < minGap[name]) return;
+        const ac = context();
+        if (!ac || !sounds[name]) return;
+        lastPlayed[name] = now;
+        sounds[name](ac);
+      },
+      setEnabled(value) {
+        enabled = Boolean(value) && Boolean(AudioCtx);
+        try {
+          localStorage.setItem(STORAGE_KEY, enabled ? 'on' : 'off');
+        } catch {
+          /* storage unavailable — the choice lasts until the page is closed */
+        }
+        listeners.forEach((listener) => listener(enabled));
+        if (!ctx) return;
+        if (enabled) ctx.resume().then(() => this.play('toggle')).catch(() => {});
+        else ctx.suspend().catch(() => {});
+      },
+      onChange(listener) {
+        listeners.push(listener);
+      },
+    };
+  })();
+
+  function initSound() {
+    // Unlock audio on the first interaction (capture phase, so it runs before other handlers).
+    const unlock = () => sfx.unlock();
+    ['pointerdown', 'pointerup', 'keydown'].forEach((type) => window.addEventListener(type, unlock, { capture: true, passive: true }));
+
+    const toggle = $('#sound-toggle');
+    if (toggle && sfx.supported) {
+      const label = $('.sound-toggle__label', toggle);
+      const sync = (on) => {
+        toggle.setAttribute('aria-pressed', String(on));
+        if (label) label.textContent = on ? 'sfx on' : 'sfx off';
+      };
+      sync(sfx.enabled);
+      sfx.onChange(sync);
+      toggle.hidden = false;
+      toggle.addEventListener('click', () => sfx.setEnabled(!sfx.enabled));
+    }
+
+    // Soft blip when the mouse moves onto something interactive.
+    const hoverable = 'a, button, .card:not(.contact), .chips li';
+    document.addEventListener('pointerover', (event) => {
+      if (event.pointerType !== 'mouse' || !(event.target instanceof Element)) return;
+      const el = event.target.closest(hoverable);
+      if (!el || (event.relatedTarget instanceof Node && el.contains(event.relatedTarget))) return;
+      sfx.play('hover');
+    });
+
+    // Click on links and buttons (controls that play their own sound are skipped).
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+      const el = event.target.closest('a, button');
+      if (!el || el.matches('[type="submit"], [data-cmd], [data-copy], #sound-toggle')) return;
+      sfx.play('click');
+    });
+
+    // Typing sounds in the terminal and the email form.
+    document.addEventListener('keydown', (event) => {
+      if (!(event.target instanceof Element) || !event.target.matches('input, textarea')) return;
+      if (event.key.length === 1 || event.key === 'Backspace') sfx.play('key');
     });
   }
 
@@ -80,6 +229,7 @@
         } catch {
           /* storage unavailable — the boot simply runs again next time */
         }
+        sfx.play('granted');
         boot.classList.add('is-leaving');
         root.classList.remove('booting');
         setTimeout(() => boot.remove(), 600);
@@ -101,6 +251,7 @@
           tag.textContent = `[${labels[status]}]`;
           line.append(tag, ` ${text}`);
           log.append(line);
+          sfx.play('boot');
           bar.style.width = `${((i + 1) / steps.length) * 100}%`;
           await sleep(i === steps.length - 1 ? 500 : 240);
         }
@@ -303,7 +454,7 @@
         toggle.focus();
       }
     });
-    window.matchMedia('(min-width: 981px)').addEventListener('change', (event) => {
+    window.matchMedia('(min-width: 1101px)').addEventListener('change', (event) => {
       if (event.matches) setOpen(false);
     });
 
@@ -351,16 +502,51 @@
     update();
   }
 
-  /* ---------- Pointer spotlight on cards ---------- */
+  /* ---------- Pointer spotlight + 3D tilt on cards ---------- */
   function initSpotlight() {
     if (!window.matchMedia('(hover: hover)').matches) return;
+    const tilt = finePointer && !reduceMotion;
     document.addEventListener('pointermove', (event) => {
       const card = event.target instanceof Element ? event.target.closest('.card') : null;
       if (!card) return;
       const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
-      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      card.style.setProperty('--mx', `${x}px`);
+      card.style.setProperty('--my', `${y}px`);
+      if (!tilt) return;
+      // Up to ±4° — enough to feel 3D without making text hard to read.
+      card.style.setProperty('--ry', `${((x / rect.width - 0.5) * 8).toFixed(2)}deg`);
+      card.style.setProperty('--rx', `${((0.5 - y / rect.height) * 8).toFixed(2)}deg`);
     }, { passive: true });
+  }
+
+  /* ---------- 3D parallax on the hero photo ---------- */
+  function initHeroDepth() {
+    const hero = $('#home');
+    if (!hero || !finePointer || reduceMotion) return;
+    let frame = 0;
+    let px = 0;
+    let py = 0;
+
+    const apply = () => {
+      frame = 0;
+      hero.style.setProperty('--px', px.toFixed(3));
+      hero.style.setProperty('--py', py.toFixed(3));
+    };
+
+    hero.addEventListener('pointermove', (event) => {
+      const rect = hero.getBoundingClientRect();
+      px = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      py = ((event.clientY - rect.top) / rect.height) * 2 - 1;
+      if (!frame) frame = requestAnimationFrame(apply);
+    }, { passive: true });
+
+    hero.addEventListener('pointerleave', () => {
+      px = 0;
+      py = 0;
+      if (!frame) frame = requestAnimationFrame(apply);
+    });
   }
 
   /* ---------- Interactive terminal ---------- */
@@ -381,16 +567,20 @@
       return node;
     };
 
-    const link = (text, href) => {
+    const link = (text, href, { download } = {}) => {
       const node = document.createElement('a');
       node.href = href;
       node.textContent = text;
-      if (/^https?:/.test(href)) {
+      if (download) node.download = download;
+      else if (/^https?:/.test(href)) {
         node.target = '_blank';
         node.rel = 'noopener noreferrer';
       }
       return node;
     };
+
+    const cvName = PROFILE.cv.split('/').pop();
+    const scrollBehavior = reduceMotion ? 'auto' : 'smooth';
 
     // print('plain text', ['coloured text', 't-ok'], someNode, ...)
     const print = (...parts) => {
@@ -413,6 +603,7 @@
     const sections = {
       home: 'home',
       about: 'about',
+      experience: 'experience',
       expertise: 'expertise',
       skills: 'skills',
       methodology: 'methodology',
@@ -433,15 +624,26 @@
       },
       whoami: {
         desc: 'who is Taha?',
-        run: () => print('taha_amin — Penetration Tester | Web App & Network Security'),
+        run: () => print('taha_amin — Cyber Security Engineer | Penetration Tester | Bug Bounty Hunter'),
       },
       about: {
         desc: 'short bio',
         run() {
-          print('Penetration tester with an academic foundation in Cyber Security (BS).');
-          print(['focus     ', 't-ok'], 'web application & network security');
+          print('BS Cyber Security student at The Islamia University of Bahawalpur, focused on offensive security.');
+          print(['focus     ', 't-ok'], 'penetration testing · malware analysis & reversing · osint');
+          print(['bounty    ', 't-ok'], 'active bug bounty hunter on ', link('Bugcrowd', PROFILE.bugcrowd));
           print(['standards ', 't-ok'], 'OWASP · PTES · MITRE ATT&CK');
-          print(['builds    ', 't-ok'], 'security tooling in Python — OSINT automation, Tor scrapers, AI agents');
+          print(['builds    ', 't-ok'], 'Python security tools — OSINT framework, offline AI voice assistant');
+          print(['os        ', 't-ok'], 'Arch Linux, daily');
+        },
+      },
+      experience: {
+        desc: 'work & education',
+        run() {
+          $$('.exp__item').forEach((item) => {
+            print(['[+] ', 't-ok'], [textOf($('.exp__role', item)), 't-head'], ['  ' + textOf($('.badge', item)).toLowerCase(), 't-warn']);
+            print(['    ' + textOf($('.exp__org', item)), 't-dim']);
+          });
         },
       },
       skills: {
@@ -462,7 +664,7 @@
             print(['[+] ', 't-ok'], link(textOf(anchor), anchor.href));
             print(['    ' + textOf($('.project__text', project)), 't-dim']);
           });
-          print(['more → ', 't-dim'], link('github.com/TAHAMEO', `${LINKS.github}?tab=repositories`));
+          print(['more → ', 't-dim'], link(stripProtocol(PROFILE.github), `${PROFILE.github}?tab=repositories`));
         },
       },
       methodology: {
@@ -476,17 +678,59 @@
       socials: {
         desc: 'where to find me',
         run() {
-          print(['github    ', 't-ok'], link(stripProtocol(LINKS.github), LINKS.github));
-          print(['x         ', 't-ok'], link(stripProtocol(LINKS.x), LINKS.x));
-          if (CONFIG.linkedin) print(['linkedin  ', 't-ok'], link(stripProtocol(CONFIG.linkedin), CONFIG.linkedin));
+          ['github', 'linkedin', 'bugcrowd', 'x'].forEach((key) => {
+            print([key.padEnd(10), 't-ok'], link(stripProtocol(PROFILE[key]), PROFILE[key]));
+          });
         },
       },
       contact: {
         desc: 'how to reach me',
         run() {
-          if (CONFIG.email) print(['email     ', 't-ok'], link(CONFIG.email, `mailto:${CONFIG.email}`));
+          print(['email     ', 't-ok'], link(PROFILE.email, `mailto:${PROFILE.email}`));
           commands.socials.run();
-          print(['Or run ', 't-dim'], ['cd contact', 't-cmd'], [' to jump to the contact section.', 't-dim']);
+          print(['cv        ', 't-ok'], link(cvName, PROFILE.cv, { download: cvName }));
+          print(['Run ', 't-dim'], ['email', 't-cmd'], [' to write me a message.', 't-dim']);
+        },
+      },
+      email: {
+        desc: 'send me an email',
+        run() {
+          print(['to        ', 't-ok'], link(PROFILE.email, `mailto:${PROFILE.email}`));
+          const form = $('#contact-form');
+          if (!form) return;
+          print(['opening the email form…', 't-dim']);
+          form.scrollIntoView({ behavior: scrollBehavior, block: 'center' });
+          setTimeout(() => $('#cf-name')?.focus({ preventScroll: true }), reduceMotion ? 0 : 700);
+        },
+      },
+      cv: {
+        desc: 'download my CV (cv view opens it)',
+        run(args) {
+          if ((args[0] || '').toLowerCase() === 'view') {
+            print(['[+] ', 't-ok'], 'opening ', link(cvName, PROFILE.cv, { download: cvName }), ' in a new tab…');
+            window.open(PROFILE.cv, '_blank', 'noopener');
+            return;
+          }
+          print(['[+] ', 't-ok'], 'downloading ', link(cvName, PROFILE.cv, { download: cvName }), ' …');
+          const anchor = link(cvName, PROFILE.cv, { download: cvName });
+          anchor.hidden = true;
+          document.body.append(anchor);
+          anchor.click();
+          anchor.remove();
+          print(['done. run ', 't-dim'], ['cv view', 't-cmd'], [' to open it in the browser instead.', 't-dim']);
+        },
+      },
+      sound: {
+        desc: 'sound effects: sound on | off',
+        run(args) {
+          if (!sfx.supported) {
+            print(['sound: not supported in this browser', 't-err']);
+            return;
+          }
+          const arg = (args[0] || '').toLowerCase();
+          const next = arg === 'on' ? true : arg === 'off' ? false : !sfx.enabled;
+          sfx.setEnabled(next);
+          print(['sound effects ', 't-dim'], [next ? 'on' : 'off', next ? 't-ok' : 't-warn']);
         },
       },
       cd: {
@@ -500,12 +744,12 @@
             return;
           }
           print(['navigating to ', 't-dim'], [`#${id}`, 't-path']);
-          document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+          document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior });
         },
       },
       ls: {
         desc: 'list files',
-        run: () => print(['about.txt  skills.txt  contact.txt  projects/  ', 't-path'], ['secret.txt', 't-warn']),
+        run: () => print(['about.txt  skills.txt  contact.txt  ', 't-path'], [`${cvName}  `, 't-ok'], ['projects/  ', 't-path'], ['secret.txt', 't-warn']),
       },
       cat: {
         desc: 'read a file, e.g. cat about.txt',
@@ -515,6 +759,7 @@
           if (!file) print(['cat: missing file operand', 't-err']);
           else if (file === 'secret.txt') print(['cat: secret.txt: Permission denied', 't-err'], [' — nice try, that is exactly what I would do ;)', 't-dim']);
           else if (file.startsWith('projects')) print(['cat: projects/: Is a directory — try ', 't-err'], ['projects', 't-cmd']);
+          else if (file.endsWith('.pdf')) print([`cat: ${args[0]}: binary file — try `, 't-err'], ['cv', 't-cmd']);
           else if (Object.hasOwn(files, file)) commands[files[file]].run([]);
           else print([`cat: ${args[0]}: No such file or directory`, 't-err']);
         },
@@ -535,12 +780,12 @@
           const info = [
             [['taha', 't-ok'], '@', ['kali', 't-ok']],
             [['----------', 't-dim']],
-            [['role      ', 't-path'], 'Penetration Tester'],
-            [['focus     ', 't-path'], 'Web App & Network Security'],
-            [['standards ', 't-path'], 'OWASP, PTES, MITRE ATT&CK'],
-            [['education ', 't-path'], 'BS Cyber Security'],
-            [['languages ', 't-path'], 'Python'],
-            [['shell     ', 't-path'], 'portfolio-zsh 1.0'],
+            [['role      ', 't-path'], 'Cyber Security Engineer'],
+            [['focus     ', 't-path'], 'Pentesting · Bug Bounty · OSINT'],
+            [['bounty    ', 't-path'], 'bugcrowd.com/h/tahameo'],
+            [['education ', 't-path'], 'BS Cyber Security (IUB)'],
+            [['os        ', 't-path'], 'Arch Linux · Kali'],
+            [['code      ', 't-path'], 'Python, Bash, C, C++'],
           ];
           // Side by side when there is room, stacked on narrow screens.
           if (body.clientWidth >= 520) {
@@ -564,6 +809,8 @@
       hack: { hidden: true, run: () => print(['Access denied: ', 't-err'], 'I only hack with written permission. ;)') },
       rm: { hidden: true, run: () => print(['rm: permission denied', 't-err'], [' — this box is hardened.', 't-dim']) },
       exit: { hidden: true, run: () => print(['There is no escape. ', 't-warn'], 'Try ', ['cd contact', 't-cmd'], ' instead.') },
+      mail: { hidden: true, run: () => commands.email.run([]) },
+      resume: { hidden: true, run: (args) => commands.cv.run(args) },
     };
 
     const run = (raw) => {
@@ -575,8 +822,13 @@
       const [name, ...args] = raw.split(/\s+/);
       const key = name.toLowerCase();
       const command = Object.hasOwn(commands, key) ? commands[key] : null;
-      if (command) command.run(args);
-      else print([`command not found: ${name}`, 't-err'], [' — type ', 't-dim'], ['help', 't-cmd'], [' for a list of commands', 't-dim']);
+      if (command) {
+        sfx.play('enter');
+        command.run(args);
+      } else {
+        sfx.play('error');
+        print([`command not found: ${name}`, 't-err'], [' — type ', 't-dim'], ['help', 't-cmd'], [' for a list of commands', 't-dim']);
+      }
 
       // Keep the scrollback bounded.
       while (output.childElementCount > 300) output.firstElementChild.remove();
@@ -653,11 +905,15 @@
     }
   }
 
-  /* ---------- Contact form → visitor's mail app ---------- */
+  /* ---------- Email form → visitor's mail app or Gmail ---------- */
   function initContactForm() {
     const form = $('#contact-form');
     const status = $('#contact-status');
-    if (!form || !CONFIG.email) return;
+    if (!form) return;
+    form.hidden = false;
+
+    // Fires once per invalid field; the sound's minimum gap keeps it to a single buzz.
+    form.addEventListener('invalid', () => sfx.play('error'), true);
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -665,20 +921,60 @@
       const name = String(data.get('name') || '').trim();
       const email = String(data.get('email') || '').trim();
       const message = String(data.get('message') || '').trim();
-      const subject = `Portfolio enquiry from ${name}`;
+      const subject = String(data.get('subject') || '').trim() || `Portfolio enquiry from ${name}`;
       const body = `${message}\n\n— ${name} <${email}>`;
-      window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      if (status) status.textContent = 'Opening your email app…';
+      const viaGmail = event.submitter?.value === 'gmail';
+
+      if (viaGmail) {
+        const params = new URLSearchParams({ view: 'cm', fs: '1', to: PROFILE.email, su: subject, body });
+        window.open(`https://mail.google.com/mail/?${params}`, '_blank', 'noopener');
+      } else {
+        window.location.href = `mailto:${PROFILE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      }
+
+      sfx.play('success');
+      if (status) {
+        status.textContent = viaGmail
+          ? 'Gmail opened in a new tab — review the message and hit send.'
+          : 'Your email app should open with the message ready — just hit send.';
+      }
     });
   }
 
-  applyConfig();
+  /* ---------- Copy-to-clipboard buttons ---------- */
+  function initCopy() {
+    if (!navigator.clipboard) return;
+    $$('[data-copy]').forEach((button) => {
+      const label = $('.copy-btn__label', button);
+      let timer = 0;
+      button.hidden = false;
+      button.addEventListener('click', async () => {
+        let copied = true;
+        try {
+          await navigator.clipboard.writeText(button.dataset.copy);
+        } catch {
+          copied = false;
+        }
+        sfx.play(copied ? 'success' : 'error');
+        if (!label) return;
+        label.textContent = copied ? 'copied!' : 'copy failed';
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          label.textContent = 'copy';
+        }, 1800);
+      });
+    });
+  }
+
+  initSound();
   initReveal();
   initNav();
   initScrollEffects();
   initSpotlight();
+  initHeroDepth();
   initTerminal();
   initContactForm();
+  initCopy();
   initScramble();
 
   const year = $('#year');

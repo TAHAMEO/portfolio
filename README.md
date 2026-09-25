@@ -1,6 +1,6 @@
 # Taha Amin — Cyber Security Portfolio
 
-A single-page, terminal-themed portfolio for **Taha Amin**, Penetration Tester (Web App & Network Security · BS Cyber Security · OWASP • PTES • MITRE ATT&CK).
+A single-page, terminal-themed portfolio for **Taha Amin**, Cyber Security Engineer & Penetration Tester (BS Cyber Security at IUB · bug bounty hunter on Bugcrowd · OWASP • PTES • MITRE ATT&CK).
 
 Plain HTML, CSS and JavaScript — no frameworks, no build step, no third-party requests.
 
@@ -8,8 +8,12 @@ Plain HTML, CSS and JavaScript — no frameworks, no build step, no third-party 
 
 - **Boot sequence** on the first visit of each browser session (skippable with any key or click)
 - **Matrix rain** hero with the GitHub profile photo in a "target-lock" frame, and a typing effect for roles
-- **Interactive terminal** in the About section — try `help`, `skills`, `projects`, `neofetch`, `cd contact` (plus a few easter eggs), with history (↑/↓), Tab completion and one-click quick commands
-- Sections: About, Expertise, Skills & tool marquee, PTES methodology timeline, Projects, Contact
+- **Interactive terminal** in the About section — try `help`, `experience`, `projects`, `cv`, `email`, `sound off`, `neofetch`, `cd contact` (plus a few easter eggs), with history (↑/↓), Tab completion and one-click quick commands
+- **CV download** — `assets/Taha_Amin_CV.pdf`, linked from the hero, About, Contact and the terminal's `cv` command
+- **Send an email** — a form that writes the message and opens it in the visitor's email app or in Gmail, plus a copy-to-clipboard button for the address
+- **Subtle 3D** — cards tilt towards the pointer, the hero photo has layered parallax depth, a receding grid floor under the hero, an angled terminal and pressable buttons
+- **Sound effects** synthesised with the Web Audio API (no audio files): hover and click blips, typing clicks, terminal and boot beeps, a success chime. They start after the first click or key press (browser rule) and can be muted with the **sfx** button or `sound off` — the choice is remembered
+- Sections: About, Experience, Expertise, Skills & tool marquee, PTES methodology timeline, Projects, Contact
 - Responsive from 360px phones to wide desktops, keyboard accessible, respects `prefers-reduced-motion`, and still readable with JavaScript disabled
 - Strict Content-Security-Policy (no inline scripts or styles) and self-hosted fonts
 
@@ -19,7 +23,8 @@ Plain HTML, CSS and JavaScript — no frameworks, no build step, no third-party 
 index.html              page content (all sections)
 css/style.css           theme and layout (colours are CSS variables at the top)
 js/init.js              tiny <head> script: enables JS styles and the boot sequence
-js/main.js              interactions + CONFIG for optional contact links
+js/main.js              interactions, sound effects + PROFILE (contact details)
+assets/Taha_Amin_CV.pdf CV offered for download
 assets/img/profile.jpg  profile photo (from github.com/TAHAMEO)
 assets/fonts/           Inter + JetBrains Mono (SIL OFL 1.1)
 assets/favicon.svg      shield favicon
@@ -27,26 +32,34 @@ assets/favicon.svg      shield favicon
 
 ## Customising
 
-### Email, LinkedIn and resume
+### Contact details and CV
 
-Open `js/main.js` and fill in the `CONFIG` block at the top:
+Contact links (email, LinkedIn, GitHub, Bugcrowd, X) are written directly into `index.html`, so they work without JavaScript. The terminal and the email form read the same details from the `PROFILE` block at the top of `js/main.js`:
 
 ```js
-const CONFIG = {
-  email: 'you@example.com',                          // shows Email links + a contact form
-  linkedin: 'https://www.linkedin.com/in/your-handle', // shows LinkedIn links
-  resume: 'assets/Taha-Amin-Resume.pdf',             // shows a "Resume" download button
+const PROFILE = {
+  email: '1tahameo@gmail.com',
+  cv: 'assets/Taha_Amin_CV.pdf',
+  github: 'https://github.com/TAHAMEO',
+  linkedin: 'https://www.linkedin.com/in/taha-meo-68a89a376/',
+  bugcrowd: 'https://bugcrowd.com/h/tahameo',
+  x: 'https://x.com/tahameo5',
 };
 ```
 
-Anything left as `''` stays hidden, so the site never shows a broken link. For the resume, put the PDF in `assets/` first.
+If a link changes, update it in both places. To update the CV, replace `assets/Taha_Amin_CV.pdf` with the new file (keep the same name and every download link keeps working).
+
+### Sound effects
+
+The sounds are defined in the `sounds` object inside `sfx` in `js/main.js` — each is a few lines of pitch, length and volume, so they are easy to tweak or remove. `master.gain.value` sets the overall volume.
 
 ### Content
 
-All text lives in `index.html`, one clearly commented block per section (HERO, ABOUT, EXPERTISE, SKILLS, METHODOLOGY, PROJECTS, CONTACT). The terminal's `skills`, `projects` and `methodology` commands read from the page, so editing the HTML keeps them in sync.
+All text lives in `index.html`, one clearly commented block per section (HERO, ABOUT, EXPERIENCE, EXPERTISE, SKILLS, METHODOLOGY, PROJECTS, CONTACT). The terminal's `experience`, `skills`, `projects` and `methodology` commands read from the page, so editing the HTML keeps them in sync.
 
 - **Photo:** replace `assets/img/profile.jpg` (a square image works best).
-- **Projects:** copy an `<article class="card project">` block and change the link, title, text and tags.
+- **Projects:** copy an `<article class="card project">` block and change the link, title, text, highlights and tags.
+- **Experience:** copy an `<li class="card card--hud exp__item">` block in the EXPERIENCE section.
 - **Colours:** change `--accent` / `--cyan` (and their `-rgb` versions) in `:root` at the top of `css/style.css`.
 
 ### Content-Security-Policy
