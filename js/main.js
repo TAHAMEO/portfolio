@@ -6,38 +6,34 @@
   'use strict';
 
   /* ------------------------------------------------------------------
-   * CONFIG — fill these in to show extra contact options.
-   * Leave a value empty ('') and that link/button stays hidden.
+   * Contact details. The email is assembled here at runtime (never written
+   * out in the HTML) so simple scrapers can't harvest it from the page source.
    * ------------------------------------------------------------------ */
-  const CONFIG = {
-    email: '', //    e.g. 'you@example.com' — adds Email links and the contact form
-    linkedin: '', // e.g. 'https://www.linkedin.com/in/your-handle'
-    resume: '', //   e.g. 'assets/Taha-Amin-Resume.pdf' — adds a "Resume" download button
-  };
+  const EMAIL = ['1tahameo', 'gmail.com'].join('@');
 
   const LINKS = {
     github: 'https://github.com/TAHAMEO',
+    linkedin: 'https://www.linkedin.com/in/taha-meo-68a89a376/',
+    bugcrowd: 'https://bugcrowd.com/h/tahameo',
     x: 'https://x.com/tahameo5',
+    cv: 'assets/Taha-Amin-CV.pdf',
   };
 
   const root = document.documentElement;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const stripProtocol = (url) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 
-  /* ---------- Optional links from CONFIG ---------- */
-  function applyConfig() {
-    $$('[data-config]').forEach((el) => {
-      const key = el.dataset.config;
-      const value = (CONFIG[key] || '').trim();
-      if (!value) return;
-
+  /* ---------- Email links: [data-email] elements are revealed with a mailto: link ---------- */
+  function initEmail() {
+    $$('[data-email]').forEach((el) => {
       const link = el.matches('a') ? el : $('a', el);
-      if (link) link.href = key === 'email' ? `mailto:${value}` : value;
-      $$('[data-config-text]', el).forEach((node) => {
-        node.textContent = key === 'email' ? value : stripProtocol(value);
+      if (link) link.href = `mailto:${EMAIL}`;
+      $$('[data-email-text]', el).forEach((node) => {
+        node.textContent = EMAIL;
       });
       el.hidden = false;
     });
@@ -303,7 +299,7 @@
         toggle.focus();
       }
     });
-    window.matchMedia('(min-width: 981px)').addEventListener('change', (event) => {
+    window.matchMedia('(min-width: 881px)').addEventListener('change', (event) => {
       if (event.matches) setOpen(false);
     });
 
@@ -351,16 +347,57 @@
     update();
   }
 
-  /* ---------- Pointer spotlight on cards ---------- */
-  function initSpotlight() {
-    if (!window.matchMedia('(hover: hover)').matches) return;
+  /* ---------- Cards: pointer spotlight + 3D tilt on .tilt cards ---------- */
+  function initTilt() {
+    if (!finePointer) return;
+    const MAX_TILT = 7; // degrees
+    let tilted = null;
+
+    const settle = () => {
+      if (!tilted) return;
+      tilted.style.setProperty('--rx', '0deg');
+      tilted.style.setProperty('--ry', '0deg');
+      tilted = null;
+    };
+
     document.addEventListener('pointermove', (event) => {
       const card = event.target instanceof Element ? event.target.closest('.card') : null;
+      if (card !== tilted) settle();
       if (!card) return;
+
       const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
-      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      card.style.setProperty('--mx', `${x}px`);
+      card.style.setProperty('--my', `${y}px`);
+
+      if (reduceMotion || !card.classList.contains('tilt')) return;
+      card.style.setProperty('--ry', `${((x / rect.width - 0.5) * 2 * MAX_TILT).toFixed(2)}deg`);
+      card.style.setProperty('--rx', `${((0.5 - y / rect.height) * 2 * MAX_TILT).toFixed(2)}deg`);
+      tilted = card;
     }, { passive: true });
+
+    document.documentElement.addEventListener('pointerleave', settle);
+  }
+
+  /* ---------- Hero avatar leans towards the pointer (its layers sit at different depths) ---------- */
+  function initDepth() {
+    const hero = $('#home');
+    const avatar = $('#avatar');
+    if (!hero || !avatar || reduceMotion || !finePointer) return;
+
+    hero.addEventListener('pointermove', (event) => {
+      const rect = hero.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      avatar.style.setProperty('--tilt-x', `${(-y * 16).toFixed(2)}deg`);
+      avatar.style.setProperty('--tilt-y', `${(x * 22).toFixed(2)}deg`);
+    }, { passive: true });
+
+    hero.addEventListener('pointerleave', () => {
+      avatar.style.setProperty('--tilt-x', '0deg');
+      avatar.style.setProperty('--tilt-y', '0deg');
+    });
   }
 
   /* ---------- Interactive terminal ---------- */
@@ -413,10 +450,11 @@
     const sections = {
       home: 'home',
       about: 'about',
+      experience: 'experience',
       expertise: 'expertise',
+      projects: 'projects',
       skills: 'skills',
       methodology: 'methodology',
-      projects: 'projects',
       contact: 'contact',
     };
 
@@ -433,15 +471,28 @@
       },
       whoami: {
         desc: 'who is Taha?',
-        run: () => print('taha_amin — Penetration Tester | Web App & Network Security'),
+        run: () => print('taha_amin — Cyber Security Engineer | Penetration Tester | Bug Bounty Hunter'),
       },
       about: {
         desc: 'short bio',
         run() {
-          print('Penetration tester with an academic foundation in Cyber Security (BS).');
-          print(['focus     ', 't-ok'], 'web application & network security');
+          print('BS Cyber Security student at The Islamia University of Bahawalpur (IUB).');
+          print(['focus     ', 't-ok'], 'penetration testing, OSINT, malware analysis & reverse engineering');
+          print(['bounty    ', 't-ok'], 'active bug bounty hunter on Bugcrowd');
           print(['standards ', 't-ok'], 'OWASP · PTES · MITRE ATT&CK');
-          print(['builds    ', 't-ok'], 'security tooling in Python — OSINT automation, Tor scrapers, AI agents');
+          print(['daily     ', 't-ok'], 'Arch Linux — sysadmin, hardening, scripting');
+          print(['seeking   ', 't-ok'], 'red team / security engineering roles');
+        },
+      },
+      experience: {
+        desc: 'work & lab experience',
+        run() {
+          $$('.xp__card').forEach((card) => {
+            print(['[+] ', 't-ok'], [textOf($('.xp__role', card)), 't-head'], [`  (${textOf($('.badge', card))})`, 't-dim']);
+            print(['    ' + textOf($('.xp__org', card)), 't-dim']);
+          });
+          const edu = $('.edu');
+          if (edu) print(['[+] ', 't-ok'], [textOf($('.edu__degree', edu)), 't-head'], ['  ' + textOf($('.edu__school', edu)), 't-dim']);
         },
       },
       skills: {
@@ -477,16 +528,26 @@
         desc: 'where to find me',
         run() {
           print(['github    ', 't-ok'], link(stripProtocol(LINKS.github), LINKS.github));
+          print(['linkedin  ', 't-ok'], link('linkedin.com/in/taha-meo', LINKS.linkedin));
+          print(['bugcrowd  ', 't-ok'], link(stripProtocol(LINKS.bugcrowd), LINKS.bugcrowd));
           print(['x         ', 't-ok'], link(stripProtocol(LINKS.x), LINKS.x));
-          if (CONFIG.linkedin) print(['linkedin  ', 't-ok'], link(stripProtocol(CONFIG.linkedin), CONFIG.linkedin));
         },
       },
       contact: {
         desc: 'how to reach me',
         run() {
-          if (CONFIG.email) print(['email     ', 't-ok'], link(CONFIG.email, `mailto:${CONFIG.email}`));
+          print(['email     ', 't-ok'], link(EMAIL, `mailto:${EMAIL}`));
           commands.socials.run();
-          print(['Or run ', 't-dim'], ['cd contact', 't-cmd'], [' to jump to the contact section.', 't-dim']);
+          print(['Or run ', 't-dim'], ['cd contact', 't-cmd'], [' to write me an email from the contact form.', 't-dim']);
+        },
+      },
+      cv: {
+        desc: 'download my CV (PDF)',
+        run() {
+          const anchor = link('Taha-Amin-CV.pdf', LINKS.cv);
+          anchor.target = '_blank';
+          anchor.rel = 'noopener';
+          print(['[+] ', 't-ok'], anchor, [' — one-page PDF', 't-dim']);
         },
       },
       cd: {
@@ -505,15 +566,16 @@
       },
       ls: {
         desc: 'list files',
-        run: () => print(['about.txt  skills.txt  contact.txt  projects/  ', 't-path'], ['secret.txt', 't-warn']),
+        run: () => print(['about.txt  experience.txt  skills.txt  contact.txt  cv.pdf  projects/  ', 't-path'], ['secret.txt', 't-warn']),
       },
       cat: {
         desc: 'read a file, e.g. cat about.txt',
         run(args) {
           const file = (args[0] || '').toLowerCase();
-          const files = { 'about.txt': 'about', 'skills.txt': 'skills', 'contact.txt': 'contact' };
+          const files = { 'about.txt': 'about', 'experience.txt': 'experience', 'skills.txt': 'skills', 'contact.txt': 'contact' };
           if (!file) print(['cat: missing file operand', 't-err']);
           else if (file === 'secret.txt') print(['cat: secret.txt: Permission denied', 't-err'], [' — nice try, that is exactly what I would do ;)', 't-dim']);
+          else if (file === 'cv.pdf') print(['cat: cv.pdf: binary file — try ', 't-err'], ['cv', 't-cmd'], [' to download it', 't-err']);
           else if (file.startsWith('projects')) print(['cat: projects/: Is a directory — try ', 't-err'], ['projects', 't-cmd']);
           else if (Object.hasOwn(files, file)) commands[files[file]].run([]);
           else print([`cat: ${args[0]}: No such file or directory`, 't-err']);
@@ -531,22 +593,24 @@
             '   \\      /   ',
             "    '.__.'    ",
             '              ',
+            '              ',
           ];
           const info = [
             [['taha', 't-ok'], '@', ['kali', 't-ok']],
             [['----------', 't-dim']],
-            [['role      ', 't-path'], 'Penetration Tester'],
-            [['focus     ', 't-path'], 'Web App & Network Security'],
-            [['standards ', 't-path'], 'OWASP, PTES, MITRE ATT&CK'],
-            [['education ', 't-path'], 'BS Cyber Security'],
-            [['languages ', 't-path'], 'Python'],
+            [['role      ', 't-path'], 'Cyber Security Engineer'],
+            [['focus     ', 't-path'], 'Pentesting & OSINT'],
+            [['bounty    ', 't-path'], 'Bugcrowd (active)'],
+            [['os        ', 't-path'], 'Arch Linux x86_64'],
+            [['education ', 't-path'], 'BS Cyber Security, IUB'],
+            [['languages ', 't-path'], 'Python, Bash, C, C++'],
             [['shell     ', 't-path'], 'portfolio-zsh 1.0'],
           ];
           // Side by side when there is room, stacked on narrow screens.
           if (body.clientWidth >= 520) {
             art.forEach((row, i) => print([row, 't-ok'], '  ', ...(info[i] || [])));
           } else {
-            art.slice(0, -1).forEach((row) => print([row, 't-ok']));
+            art.filter((row) => row.trim()).forEach((row) => print([row, 't-ok']));
             info.forEach((row) => print(...row));
           }
         },
@@ -653,30 +717,59 @@
     }
   }
 
-  /* ---------- Contact form → visitor's mail app ---------- */
+  /* ---------- Contact form: send via the visitor's mail app or Gmail, or copy the address ---------- */
   function initContactForm() {
     const form = $('#contact-form');
     const status = $('#contact-status');
-    if (!form || !CONFIG.email) return;
+    if (!form || !status) return;
+
+    const setStatus = (text) => {
+      status.textContent = text;
+      status.classList.add('is-done');
+    };
+
+    const compose = () => {
+      const data = new FormData(form);
+      const field = (key) => String(data.get(key) || '').trim();
+      const name = field('name');
+      return {
+        subject: field('subject') || `Portfolio enquiry from ${name}`,
+        body: `${field('message')}\n\n— ${name} <${field('email')}>`,
+      };
+    };
 
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      const data = new FormData(form);
-      const name = String(data.get('name') || '').trim();
-      const email = String(data.get('email') || '').trim();
-      const message = String(data.get('message') || '').trim();
-      const subject = `Portfolio enquiry from ${name}`;
-      const body = `${message}\n\n— ${name} <${email}>`;
-      window.location.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      if (status) status.textContent = 'Opening your email app…';
+      const { subject, body } = compose();
+      window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      setStatus('Opening your email app… Nothing happened? Use “Send via Gmail” or copy the address.');
+    });
+
+    $('#send-gmail')?.addEventListener('click', () => {
+      if (!form.reportValidity()) return;
+      const { subject, body } = compose();
+      const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(EMAIL)}`
+        + `&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.open(url, '_blank', 'noopener');
+      setStatus('Opening Gmail in a new tab…');
+    });
+
+    $('#copy-email')?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(EMAIL);
+        setStatus(`Copied ${EMAIL} to your clipboard.`);
+      } catch {
+        setStatus(`My address: ${EMAIL}`);
+      }
     });
   }
 
-  applyConfig();
+  initEmail();
   initReveal();
   initNav();
   initScrollEffects();
-  initSpotlight();
+  initTilt();
+  initDepth();
   initTerminal();
   initContactForm();
   initScramble();
